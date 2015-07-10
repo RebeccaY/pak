@@ -1,0 +1,4 @@
+[Project]
+Name=pak
+Manager=KDevCMakeManager
+VersionControl=kdevgit
