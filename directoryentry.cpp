@@ -19,7 +19,6 @@
  */
 
 #include "directoryentry.h"
-#include <iostream>
 
 DirectoryEntry::DirectoryEntry() :
   m_loaded(false),
@@ -92,7 +91,6 @@ int DirectoryEntry::loadData(std::fstream &fin)
     }
   auto oldpos = fin.tellg(); // preserve the current position
   if (!m_loaded) {
-      //std::cout << "Loading " << std::endl;
       try {
         entryData.reset(new char[m_length]);
 
@@ -106,7 +104,6 @@ int DirectoryEntry::loadData(std::fstream &fin)
       }
       fin.seekg(oldpos, std::ios::beg);    // restore file position for the caller.
       m_loaded = true;
-      //std::cout << "Loaded OK " << filename.data() << std::endl;;
     }
   return 0;
 }
