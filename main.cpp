@@ -27,7 +27,7 @@
 
 #include "pak.h"
 
-void printLicense(void)
+static void printLicense(void)
 {
     std::cout << "This program is free software: you can redistribute it and/or modify\n"
               "it under the terms of the GNU General Public License as published by\n"
@@ -41,7 +41,7 @@ void printLicense(void)
               "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
 }
 
-void print_help(void)
+static void print_help(void)
 {
     std::cout << "Use : pak [options] -i/-o pakfile.pak -d directory/to/import/from/or/to\n\n"
               "Options :\n"
@@ -61,20 +61,38 @@ void print_help(void)
 }
 
 
+static TreeItem *findTreeItem(const std::string path,
+			      TreeItem *rootEntry,
+			      const bool createIfNotfound = false)
+{
+    if (path.empty()) {
+        return nullptr;
+    }
+    TreeItem *tItem = rootEntry;
+    stringList t = tokenize(path);
+    for (auto &x : t) {
+        tItem = tItem->findChild(x, true);
+    }
+    return tItem;
+}
+
 int main(int argc, char **argv)
 {
 
     int optch;
     std::string pakfilename;
     std::string workingpath;
+    std::string insertPath;
     //std::string importpath;
     bool importpak = false;
     bool exportpak = false;
+    bool workWithFile = false;
     bool verbose = false;
+    bool pakPath = false;
     char *currentPath;
 
 
-   // auto memo = get_mem_total();
+    // auto memo = get_mem_total();
 
     std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and Quake/Quake2\nengine based games.\n"
               << "(C) Dennis Katsonis (2015).\t\tVersion " << VERSION << "\n\n";
@@ -84,28 +102,107 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    while ((optch = getopt(argc, argv, "e:i:d:Vv")) != -1) {
+    while ((optch = getopt(argc, argv, "x:D:p:a:A:e:i:d:Vv")) != -1) {
         switch (optch) {
-        case 'V':
+        case 'x': // Delete
+        case 'V': // Licence
             printLicense();
             return 0;
             break;
-        case 'd':
+        case 'd': // Working directory
             workingpath = optarg;
             break;
-        case 'e':
+        case 'D': // Working file
+            workingpath = optarg;
+            workWithFile = true;
+            break;
+        case 'e': // Export pak
             exportpak = true;
             pakfilename = optarg;
             break;
-        case 'v':
+        case 'p': // subdirectory in pak to process
+            insertPath = optarg;
+            pakPath= true;
+            break;
+        case 'v': // Verbose
             verbose = true;
             break;
-        case 'i':
+        case 'i': // import
             importpak = true;
             pakfilename = optarg;
             break;
         }			// End switch.
     }				// End while.
+
+
+    if (workWithFile && importpak) {
+        auto insertPathPos = insertPath.end();
+        --insertPathPos;
+        if (*insertPathPos != '/') {
+            insertPath.append("/");
+            std::cout << insertPath << std::endl;
+        } // We want a trailing slash.  Add one if the user
+        // did notput one.
+
+        insertPathPos = insertPath.begin();
+        if (*insertPathPos == '/') {
+            //We dont want a leading one.  Remove if it exists.
+            insertPath.erase(0, 1);
+        }
+
+
+        try {
+            Pak pak(pakfilename.c_str());
+            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(), true);
+            pak.addEntry(insertPath,workingpath.c_str(), tItem);
+            pak.writePak(pakfilename.c_str());
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+        }
+        return 0;
+    }
+
+    if (workWithFile && exportpak) {
+        try {
+            Pak pak(pakfilename.c_str());
+            TreeItem *tItem= findTreeItem(workingpath, pak.rootEntry(), false);
+            pak.exportEntry(workingpath, tItem);
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+
+        }
+        return 0;
+    }
+
+    if (pakPath && importpak) {
+        insertPath.append("/");
+        try {
+            Pak pak(pakfilename.c_str());
+            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(),true);
+            pak.importDirectory(workingpath.c_str(), tItem);
+            pak.writePak(pakfilename.c_str());
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+        }
+        return 0;
+    }
+
+    if (pakPath && exportpak) {
+        insertPath.append("/");
+        try {
+            Pak pak(pakfilename.c_str());
+            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(), false);
+            pak.exportDirectory(workingpath.c_str(), tItem);
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+        }
+        return 0;
+    }
+
 
     if (importpak && exportpak) {
         std::cout << "Cannot import and export at the same time...\n";
@@ -119,9 +216,9 @@ int main(int argc, char **argv)
     }
 
     currentPath = getcwd(NULL, 0);
-    
-    
-    if (importpak) {
+
+
+    if (importpak && !pakPath) {
         std::cout << "Creating " << pakfilename << std::endl;
         Pak pak;
         if (verbose) {
@@ -132,8 +229,8 @@ int main(int argc, char **argv)
         }
         try {
             pak.importDirectory(workingpath.c_str(), nullptr);
-	    //chdir(currentPath);
-	    pak.writePak(pakfilename.c_str());
+            chdir(currentPath);
+            pak.writePak(pakfilename.c_str());
         } catch (PakException &e) {
             exceptionHander(e);
             pak.close();
@@ -141,25 +238,25 @@ int main(int argc, char **argv)
         // pak.test();
     }
 
-    if (exportpak) {
+    if (exportpak && !pakPath) {
         std::cout << "Exporting " << pakfilename << std::endl;
-        
-	if (workingpath.empty()) {
+
+        if (workingpath.empty()) {
             workingpath = ".";
         }
-	try {
+        try {
             Pak pak(pakfilename.c_str());
             if (verbose) {
                 pak.setVerbose(true);
-	    }
+            }
             pak.exportPak(workingpath.c_str());
-            
+
         } catch (PakException &e) {
             exceptionHander(e);
 
         }
     }
-
+    free(currentPath);
     return 0;
 }
 

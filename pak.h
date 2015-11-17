@@ -73,13 +73,13 @@ public:
     int open(const char *filename);
     int close();
     int exportPak(const char *exportPath);
-    int exportDirectory(const char *exportPath, TreeItem *rootItem = nullptr);
-    int importDirectory(const char *importPath, TreeItem *rootItem = nullptr);
+    int exportDirectory(const char* exportPath, TreeItem* item);
+    int importDirectory(const char* importPath, TreeItem* rootItem);
     void writeEntry(DirectoryEntry &entry);
     int writePak(const char *filename);
-    void exportEntry(const char *filename);
+    void exportEntry(std::string entryname, TreeItem* source);
     void reset(); // Clears the pak file.  Start new.  // Loses all changes
-    TreeItem *addChild(std::vector<std::string> &dirList, TreeItem *entry);
+    TreeItem *addChild(std::vector< std::string >& dirList, TreeItem* entry);
     void deleteChild(TreeItem *entry, const int row);
     void deleteEntry(TreeItem *root, const int row);
     void updateIndex(DirectoryEntry &entry);

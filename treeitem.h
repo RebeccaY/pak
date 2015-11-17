@@ -67,7 +67,8 @@ public:
     TreeItemItr& operator*();
     int childCount() const;
     int columnCount() const;
-    TreeItem *findChild ( std::string searchTerm, bool create = false ); // Returns the child that matches the directory.  Creates one if it does not exist if flag set                              
+    TreeItem *findChild ( const std::string searchTerm, bool create = false ); // Returns the child that matches the directory.  Creates one if it does not exist if flag set                              
+    DirectoryEntry &findEntry(const std::string searchTerm);
     DirectoryEntry &data ( unsigned int row );
     TreeItem *parentItem();
     void deleteItem(const unsigned int row);

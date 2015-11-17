@@ -27,6 +27,10 @@
 #include <array>
 #include <string>
 #include <fstream>
+#include <string>
+#include <vector>
+
+using stringList = std::vector<std::string>;
 
 enum class fileTypes {
   Map,
@@ -46,6 +50,7 @@ const int PAK_HEADER_SIZE = 12;
 const int PAK_DATA_LABEL_SIZE = 56;
 const int DIRECTORY_ENTRY_SIZE = 64;
 
+
 #ifdef CLI
 std::string absoluteFileName(std::array<char, PAK_DATA_LABEL_SIZE> fname);
 #endif
@@ -56,6 +61,41 @@ void stringToArray(std::string s, std::array<char, PAK_DATA_LABEL_SIZE> &arrai);
 #ifdef CLI
 std::string getFileName(const char *filename);
 #endif
+
+template <typename T>
+stringList tokenize(T &text)
+{
+    stringList directoryList;
+    auto pos = text.begin();
+    //auto dirName = &entry.filename;
+
+    while (pos != text.end()) {
+        auto fit = std::find(pos, text.end(), '/');
+        if (fit != text.end()) {
+            auto x = fit - pos;
+            std::string s;
+            s.resize(x);
+            std::copy(pos, fit, s.begin());
+
+            if (s == "..") {
+                s = "dotdot";
+            } // This is a workaround for the Quake 2 pak0.pak file.
+            // It contains as a path '..' for the ctank, which screws things up for this program
+            // when trying to create this directories.
+            // We'll convert this back to '..' when importing.
+
+	    if (s.size() > 0 ) {
+	      directoryList.push_back(s);
+	    }
+            pos = fit;
+        }
+        pos++;
+    }
+    return directoryList;
+}
+
+
+
 
 unsigned long get_mem_total();
 

@@ -150,31 +150,9 @@ void Pak::deleteEntry(TreeItem *root, const int row)
 
 void Pak::loadDir(DirectoryEntry entry)
 {
-    // First, we get the position in the directory tree.
-    std::vector<std::string> directoryList;
-    auto pos = entry.filename.begin();
-    //auto dirName = &entry.filename;
-
-    while (pos != entry.filename.end()) {
-        auto fit = std::find(pos, entry.filename.end(), '/');
-        if (fit != entry.filename.end()) {
-            auto x = fit - pos;
-            std::string s;
-            s.resize(x);
-            std::copy(pos, fit, s.begin());
-
-            if (s == "..") {
-                s = "dotdot";
-            } // This is a workaround for the Quake 2 pak0.pak file.
-            // It contains as a path '..' for the ctank, which screws things up for this program
-            // when trying to create this directories.
-            // We'll convert this back to '..' when importing.
-            directoryList.push_back(s);
-            pos = fit;
-        }
-        pos++;
-    }
-
+   // First, we get the position in the directory tree.
+  stringList directoryList;
+  directoryList = tokenize(entry.filename);
 
     auto x = addChild(directoryList, &m_rootEntry);
     x->appendItem(entry);
@@ -223,7 +201,7 @@ int Pak::exportPak(const char *exportPath)
 
 }
 
-int Pak::exportDirectory(const char *exportPath, TreeItem *item)
+int Pak::exportDirectory(const char* exportPath, TreeItem* item)
 {
     chdir(exportPath); // If we are just exporting a single directory,
     // we will want to create it first.
@@ -287,9 +265,11 @@ int Pak::writePak(const char *filename)
     return 0;
 }
 
-void Pak::exportEntry(const char *filename)
+void Pak::exportEntry(std::string entryname, TreeItem* source)
 {
-
+  auto &entry = source->findEntry(entryname);
+  entry.exportFile(getFileName(entryname).c_str(), file);
+  
 }
 
 void Pak::reset()
@@ -328,7 +308,7 @@ void Pak::loadData(DirectoryEntry &entry)
 }
 
 
-int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
+int Pak::addEntry(std::string path, const char* filename, TreeItem* rootItem)
 {
     struct stat statbuf;
     DirectoryEntry newEntry;
