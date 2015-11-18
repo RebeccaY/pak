@@ -19,8 +19,14 @@
  */
 #define VERSION "0.1.0"
 #include <iostream>
+
+#ifdef __linux
 #include <unistd.h>
 #include <linux/limits.h>
+#else
+#include "getopt.h"
+#endif
+
 #include <cassert>
 #include "pakexception.h"
 #include "exceptionhandler.h"
@@ -45,19 +51,23 @@ static void print_help(void)
 {
     std::cout << "Use : pak [options] -i/-o pakfile.pak -d directory/to/import/from/or/to\n\n"
               "Options :\n"
-              " -i Import directory tree to pak.\t"
-              " -e export pak to directory tree.\n"
-              " -d Directory to import from/export to.\n"
+              " -i Import to this pak file.\t\t"
+              " -e export from this pak file.\n"
+              " -d Directory to import/export or destination directory.\n"
               " -V Show license.\n"
+	      " -p Internal pak path to use.\t\t"
+	      " -D File to import/export.\n"
               " -v Increase verbosity.\n"
               "\nPak will either import a directory tree into a pak file, or export a pak\n"
               "files contents into a directory tree.\n"
-              "Using it easy.  Just pass the filename to the -i option to import files into a new pak\n"
-              "file, or pass the filename to the -e option to export files from an existing pak\n"
-              "file.  The -d option when importing selects where to import files from.\n"
+              "Using it easy.  Just pass the filename to the -i option to import files into\n"
+              "a new pak file, or pass the filename to the -e option to export files from\n"
+              "an existing pak file.  The -d option when importing selects where to\n"
+	      "import files from.\n"
               "This option when exporting selects where to export the files to.\n\n"
-              "Example: pak -i test.pak -d /windows/mymod\n"
-              "Import the directory tree under mymod into the file test.pak\n";
+              "Example: pak -i test.pak -d /windows/ogre -p sound\n"
+              "Import the directory tree under windows/ogre into the file test.pak\n";
+	      "under the 'sound' directory.";
 }
 
 
@@ -94,7 +104,7 @@ int main(int argc, char **argv)
 
     // auto memo = get_mem_total();
 
-    std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and Quake/Quake2\nengine based games.\n"
+    std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and related games.\n"
               << "(C) Dennis Katsonis (2015).\t\tVersion " << VERSION << "\n\n";
 
     if (argc <= 1) {
@@ -164,9 +174,13 @@ int main(int argc, char **argv)
     }
 
     if (workWithFile && exportpak) {
+      auto workingPathPos = workingpath.begin();
+      if (*workingPathPos == '/') {
+	workingpath.erase(0, 1);
+      }
         try {
             Pak pak(pakfilename.c_str());
-            TreeItem *tItem= findTreeItem(workingpath, pak.rootEntry(), false);
+            TreeItem *tItem = findTreeItem(workingpath, pak.rootEntry(), false);
             pak.exportEntry(workingpath, tItem);
         } catch (PakException &e) {
             exceptionHander(e);

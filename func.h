@@ -59,7 +59,7 @@ std::string arrayToString(std::array< char, int(PAK_DATA_LABEL_SIZE) > &filename
 void stringToArray(std::string s, std::array<char, PAK_DATA_LABEL_SIZE> &arrai);
 
 #ifdef CLI
-std::string getFileName(const char *filename);
+std::string getFileName(const std::string &filename);
 #endif
 
 template <typename T>

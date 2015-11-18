@@ -1,4 +1,4 @@
-// /*
+/*
 * Utility to manipulate Quake PAK data files.
 * Copyright ( C ) 2015  Dennis Katsonis <dennisk ( at ) netspace dot net dot au>
 *
@@ -141,7 +141,7 @@ void DirectoryEntry::exportFile ( const std::string &path, std::fstream& pakFile
       loadData ( pakFileSource );
     }
 
-  chdir ( path );
+  chdir ( path.c_str() );
   std::ofstream fout;
   fout.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
   try

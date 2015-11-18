@@ -36,7 +36,6 @@
 #include <errno.h>
 #include <map>
 #include <dirent.h>
-#include <sys/statfs.h>
 
 
 #include "directoryentry.h"
@@ -77,7 +76,7 @@ public:
     int importDirectory(const char* importPath, TreeItem* rootItem);
     void writeEntry(DirectoryEntry &entry);
     int writePak(const char *filename);
-    void exportEntry(std::string entryname, TreeItem* source);
+    void exportEntry( std::string& entryname, TreeItem* source );
     void reset(); // Clears the pak file.  Start new.  // Loses all changes
     TreeItem *addChild(std::vector< std::string >& dirList, TreeItem* entry);
     void deleteChild(TreeItem *entry, const int row);
