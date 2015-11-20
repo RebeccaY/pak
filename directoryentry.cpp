@@ -70,7 +70,7 @@ int DirectoryEntry::loadData(const char *filename)
   std::ifstream fin;
   fin.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
   try {
-    fin.open(filename, std::ios::in);
+    fin.open(filename, std::ios::in | std::ios::binary);
     entryData.reset(new char[m_length]);
     fin.read(entryData.get(), m_length);
     m_loaded = true;
@@ -126,7 +126,7 @@ void DirectoryEntry::exportFile(const char *path, std::fstream &fin)
   fout.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
   try {
 #ifndef CLI
-    fout.open(absoluteFileName(filename).toStdString().c_str(), std::ios_base::out);
+    fout.open(absoluteFileName(filename).toStdString().c_str(), std::ios::binary | std::ios_base::out);
 #else 
     fout.open(absoluteFileName(filename).c_str(), std::ios_base::out);
 #endif

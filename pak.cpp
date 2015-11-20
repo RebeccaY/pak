@@ -197,12 +197,12 @@ void Pak::makeDirectoryTree(TreeItem *item)
     for (auto x = 0; x < item->size(); x++) {
         std::ofstream fout;
 #ifndef CLI
-        fout.open(absoluteFileName((item->data(x).filename)).toStdString().c_str(), std::ios_base::out);
+        fout.open(absoluteFileName((item->data(x).filename)).toStdString().c_str(), std::ios_base::binary | std::ios_base::out);
 #else
         if (verbose) {
             std::cout << "Extracting.. " << absoluteFileName((item->data(x).filename)) << "\n";
         }
-        fout.open(absoluteFileName((item->data(x).filename)).c_str(), std::ios_base::out);
+        fout.open(absoluteFileName((item->data(x).filename)).c_str(), std::ios_base::binary | std::ios_base::out);
 #endif
         if (item->data(x).data() == nullptr) {
             item->data(x).loadData(file);
@@ -269,7 +269,7 @@ int Pak::writePak(const char *filename)
     // based on the file name provided.
 
     try {
-        file.open(filename, std::ios_base::out | std::ios_base::trunc);
+        file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 
     } catch (std::istream::failure &e) {
         throw PakException("Could not open file", filename);
