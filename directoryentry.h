@@ -48,10 +48,10 @@ public:
     void clear();
     std::array<char, 56> filename;
 
-    int loadData ( std::fstream &pakFileSource ); // stream should be already open
+    int loadData ( std::fstream &fin ); // stream should be already open
     int loadData( const char *filename); // load data from file.
     int saveData ( std::fstream &fout ); // stream should be already open
-    void exportFile( const std::string& path, std::fstream& pakFileSource );
+    void exportFile( const char *path, std::fstream &fin );
     int getLength() const;
     void setLength(const int32_t &value);
     int32_t getPosition() const;

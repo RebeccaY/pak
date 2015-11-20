@@ -150,9 +150,31 @@ void Pak::deleteEntry(TreeItem *root, const int row)
 
 void Pak::loadDir(DirectoryEntry entry)
 {
-   // First, we get the position in the directory tree.
-  stringList directoryList;
-  directoryList = tokenize(entry.filename);
+    // First, we get the position in the directory tree.
+    std::vector<std::string> directoryList;
+    auto pos = entry.filename.begin();
+    //auto dirName = &entry.filename;
+
+    while (pos != entry.filename.end()) {
+        auto fit = std::find(pos, entry.filename.end(), '/');
+        if (fit != entry.filename.end()) {
+            auto x = fit - pos;
+            std::string s;
+            s.resize(x);
+            std::copy(pos, fit, s.begin());
+
+            if (s == "..") {
+                s = "dotdot";
+            } // This is a workaround for the Quake 2 pak0.pak file.
+            // It contains as a path '..' for the ctank, which screws things up for this program
+            // when trying to create this directories.
+            // We'll convert this back to '..' when importing.
+            directoryList.push_back(s);
+            pos = fit;
+        }
+        pos++;
+    }
+
 
     auto x = addChild(directoryList, &m_rootEntry);
     x->appendItem(entry);
@@ -167,12 +189,7 @@ Pak::Pak(const char *filename) : Pak()
 void Pak::makeDirectoryTree(TreeItem *item)
 {
     for (auto x = 0; x < item->childCount(); ++x) {
-
-#ifdef __linux
         mkdir(item->child(x)->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
-#else
-	mkdir(item->child(x)->label().c_str());
-#endif
         chdir(item->child(x)->label().c_str());
         makeDirectoryTree(item->child(x));
     }
@@ -206,17 +223,11 @@ int Pak::exportPak(const char *exportPath)
 
 }
 
-int Pak::exportDirectory(const char* exportPath, TreeItem* item)
+int Pak::exportDirectory(const char *exportPath, TreeItem *item)
 {
     chdir(exportPath); // If we are just exporting a single directory,
     // we will want to create it first.
-    
-#ifdef __linux
     mkdir(item->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
-#else
-    mkdir(item->child(x)->label().c_str());
-#endif
-    
     chdir(item->label().c_str());
     makeDirectoryTree(item);
     return 0;
@@ -276,11 +287,9 @@ int Pak::writePak(const char *filename)
     return 0;
 }
 
-void Pak::exportEntry(std::string &entryname, TreeItem* source)
+void Pak::exportEntry(const char *filename)
 {
-  auto &entry = source->findEntry(entryname);
-  entry.exportFile(getFileName(entryname).c_str(), file);
-  
+
 }
 
 void Pak::reset()
@@ -319,7 +328,7 @@ void Pak::loadData(DirectoryEntry &entry)
 }
 
 
-int Pak::addEntry(std::string path, const char* filename, TreeItem* rootItem)
+int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
 {
     struct stat statbuf;
     DirectoryEntry newEntry;
@@ -385,11 +394,13 @@ int Pak::importDirectory(const char *importPath, TreeItem *rootItem)
 #ifndef NDEBUG
 #ifdef CLI
     std::cout << "Current Path " << currentPath << std::endl;
+#else
+    qDebug() << "Current Path " << currentPath.c_str();
 #endif
 #endif
-
     struct dirent *entry;
     struct stat statbuf;
+    //struct statfs sstat;
     std::string tmp;
 
     if ((directory = opendir(importPath)) == NULL) {
@@ -400,6 +411,7 @@ int Pak::importDirectory(const char *importPath, TreeItem *rootItem)
 
     while ((entry = readdir(directory)) != NULL) {
         stat(entry->d_name, &statbuf);
+        //statfs(entry->d_name, &sstat);
 
         if (S_ISDIR(statbuf.st_mode)) {
 
