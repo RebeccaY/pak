@@ -296,16 +296,18 @@ int Pak::writePak(const char *filename)
     return 0;
 }
 
-void Pak::exportEntry(std::string &entryname, TreeItem* source)
+int Pak::exportEntry(std::string &entryname, TreeItem* source)
 {
-  auto &entry = source->findEntry(entryname);
+  std::cout << "Exporting!" << std::endl;
+  auto *entry = source->findEntry(entryname);
+  if (entry == nullptr) return 1;
 
 #ifndef CLI // This uses QString
-    entry.exportFile ( getFileName (QString(entryname.c_str()) ).toStdString().c_str(), file );
+    entry->exportFile ( getFileName (QString(entryname.c_str()) ).toStdString().c_str(), file );
 #else
-    entry.exportFile ( getFileName ( entryname ).c_str(), file );
+    entry->exportFile ( getFileName ( entryname ).c_str(), file );
 #endif
-
+  return 0;
 }
 
 

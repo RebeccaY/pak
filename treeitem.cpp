@@ -196,15 +196,16 @@ std::string TreeItem::pathLabel() const
   return fullpath;
 }
 
-DirectoryEntry& TreeItem::findEntry ( const std::string searchTerm )
+DirectoryEntry* TreeItem::findEntry ( const std::string searchTerm )
 {
   for ( auto &x : items )
     {
       if ( std::equal ( searchTerm.begin(), searchTerm.end(), x.filename.begin() ) )
         {
-          return x;
+	  return &x;
         }
     }
+    return nullptr;
 }
 
 void TreeItem::appendItem(DirectoryEntry &entry)
