@@ -295,10 +295,13 @@ int Pak::writePak(const char *filename)
     return 0;
 }
 
-void Pak::exportEntry(const char *filename)
+void Pak::exportEntry(std::string &entryname, TreeItem* source)
 {
-
+  auto &entry = source->findEntry(entryname);
+  entry.exportFile(getFileName(entryname).c_str(), file);
+  
 }
+
 
 void Pak::reset()
 {
