@@ -57,6 +57,7 @@ std::string absoluteFileName(std::array<char, PAK_DATA_LABEL_SIZE> fname);
 std::string arrayToString(std::array< char, int(PAK_DATA_LABEL_SIZE) > &filename);
 
 void stringToArray(std::string s, std::array<char, PAK_DATA_LABEL_SIZE> &arrai);
+void clearArrayAfterNull( std::array<char, PAK_DATA_LABEL_SIZE> &array);
 
 #ifdef CLI
 std::string getFileName(const std::string &filename);

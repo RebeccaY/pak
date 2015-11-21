@@ -93,4 +93,17 @@ void stringToArray(std::string s, std::array< char, int(PAK_DATA_LABEL_SIZE) > &
 
 }
 
+void clearArrayAfterNull ( std::array< char, int ( PAK_DATA_LABEL_SIZE ) >& array ) {
+    auto pos = std::find ( array.begin(), array.end(), char ( 0 ) );
+    if ( pos == array.end() ) {
+        return;
+    } else {
+        while ( pos != array.end() ) {
+            *pos = char ( 0 );
+            ++pos;
+        }
+    }
+    return;
+}
+
 

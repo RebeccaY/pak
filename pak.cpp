@@ -100,7 +100,7 @@ int Pak::open(const char *filename)
     return 0;
 
 }
-TreeItem *Pak::addChild(std::vector< std::string > &dirList, TreeItem *entry)
+TreeItem *Pak::addChild(stringList &dirList, TreeItem *entry)
 {
     if (dirList.empty()) {
         return entry;
@@ -151,10 +151,11 @@ void Pak::deleteEntry(TreeItem *root, const int row)
 void Pak::loadDir(DirectoryEntry entry)
 {
     // First, we get the position in the directory tree.
-    std::vector<std::string> directoryList;
+    stringList directoryList;
     auto pos = entry.filename.begin();
     //auto dirName = &entry.filename;
-
+    clearArrayAfterNull(entry.filename);
+    
     while (pos != entry.filename.end()) {
         auto fit = std::find(pos, entry.filename.end(), '/');
         if (fit != entry.filename.end()) {

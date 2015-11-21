@@ -82,7 +82,7 @@ public:
     int writePak(const char *filename);
     void exportEntry(std::string &entryname, TreeItem* source);
     void reset(); // Clears the pak file.  Start new.  // Loses all changes
-    TreeItem *addChild(std::vector<std::string> &dirList, TreeItem *entry);
+    TreeItem *addChild(stringList &dirList, TreeItem *entry);
     void deleteChild(TreeItem *entry, const int row);
     void deleteEntry(TreeItem *root, const int row);
     void updateIndex(DirectoryEntry &entry);
