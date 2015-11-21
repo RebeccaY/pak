@@ -145,25 +145,29 @@ int main(int argc, char **argv)
     }				// End while.
 
 
-    if (workWithFile && importpak) {
-        auto insertPathPos = insertPath.end();
-        --insertPathPos;
-        if (*insertPathPos != '/') {
-            insertPath.append("/");
-            std::cout << insertPath << std::endl;
-        } // We want a trailing slash.  Add one if the user
-        // did notput one.
+    if ( workWithFile && importpak ) {
+        if ( !insertPath.empty() ) {
+            auto insertPathPos = insertPath.end();
+            --insertPathPos;
+            if ( *insertPathPos != '/' ) {
+                insertPath.append ( "/" );
+                std::cout << insertPath << std::endl;
+            } // We want a trailing slash.  Add one if the user
+            // did notput one.
 
-        insertPathPos = insertPath.begin();
-        if (*insertPathPos == '/') {
-            //We dont want a leading one.  Remove if it exists.
-            insertPath.erase(0, 1);
+            insertPathPos = insertPath.begin();
+            if ( *insertPathPos == '/' ) {
+                //We dont want a leading one.  Remove if it exists.
+                insertPath.erase ( 0, 1 );
+            }
         }
-
 
         try {
             Pak pak(pakfilename.c_str());
             TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(), true);
+            if ( tItem == nullptr ) {
+                tItem = pak.rootEntry();
+            }
             pak.addEntry(insertPath,workingpath.c_str(), tItem);
             pak.writePak(pakfilename.c_str());
         } catch (PakException &e) {
