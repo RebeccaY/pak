@@ -298,9 +298,15 @@ int Pak::writePak(const char *filename)
 void Pak::exportEntry(std::string &entryname, TreeItem* source)
 {
   auto &entry = source->findEntry(entryname);
-  entry.exportFile(getFileName(entryname).c_str(), file);
-  
+
+#ifndef CLI // This uses QString
+    entry.exportFile ( getFileName (QString(entryname.c_str()) ).toStdString().c_str(), file );
+#else
+    entry.exportFile ( getFileName ( entryname ).c_str(), file );
+#endif
+
 }
+
 
 
 void Pak::reset()
