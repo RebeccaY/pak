@@ -189,7 +189,11 @@ Pak::Pak(const char *filename) : Pak()
 void Pak::makeDirectoryTree(TreeItem *item)
 {
     for (auto x = 0; x < item->childCount(); ++x) {
+#ifdef __linux
         mkdir(item->child(x)->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+#else
+        mkdir(item->child(x)->label().c_str());
+#endif
         chdir(item->child(x)->label().c_str());
         makeDirectoryTree(item->child(x));
     }
@@ -227,7 +231,11 @@ int Pak::exportDirectory(const char *exportPath, TreeItem *item)
 {
     chdir(exportPath); // If we are just exporting a single directory,
     // we will want to create it first.
+#ifdef __linux
     mkdir(item->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+#else
+    mkdir(item->label().c_str());
+#endif
     chdir(item->label().c_str());
     makeDirectoryTree(item);
     return 0;
