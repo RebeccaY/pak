@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     // auto memo = get_mem_total();
 
     std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and related games.\n"
-              << "(C) Dennis Katsonis (2015).\t\tVersion " << VERSION << "\n\n";
+              << "(C) Dennis Katsonis, Dekay Software (2015).\t\tVersion " << VERSION << "\n\n";
 
     if (argc <= 1) {
         print_help();
@@ -185,7 +185,10 @@ int main(int argc, char **argv)
         try {
             Pak pak(pakfilename.c_str());
             TreeItem *tItem = findTreeItem(workingpath, pak.rootEntry(), false);
-            pak.exportEntry(workingpath, tItem);
+            if (pak.exportEntry(workingpath, tItem)) {
+	      std::cout << "No entry named " << workingpath << " : Check the name and try again.\n";
+	      return 1;
+	    }
         } catch (PakException &e) {
             exceptionHander(e);
             return 1;

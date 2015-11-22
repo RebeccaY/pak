@@ -8,6 +8,14 @@ treeitem.cpp pakexception.cpp)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCLI")
 
 install(TARGETS pak RUNTIME DESTINATION bin)
+INSTALL(DIRECTORY ${CMAKE_BINARY_DIR}/man1 DESTINATION share/man)
+
+# The version number.
+set (pak_VERSION_MAJOR 0)
+set (pak_VERSION_MINOR 9)
+
+set(MINGW_PREFIX "i686-w64-mingw32-")
+
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
