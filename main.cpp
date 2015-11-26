@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  */
-#define VERSION "0.1.0"
+
 #include <iostream>
 
 #ifdef __linux
@@ -32,6 +32,7 @@
 #include "exceptionhandler.h"
 
 #include "pak.h"
+#include "version.h"
 
 static void printLicense(void)
 {
@@ -151,7 +152,6 @@ int main(int argc, char **argv)
             --insertPathPos;
             if ( *insertPathPos != '/' ) {
                 insertPath.append ( "/" );
-                std::cout << insertPath << std::endl;
             } // We want a trailing slash.  Add one if the user
             // did notput one.
 

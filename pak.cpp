@@ -298,7 +298,6 @@ int Pak::writePak(const char *filename)
 
 int Pak::exportEntry(std::string &entryname, TreeItem* source)
 {
-  std::cout << "Exporting!" << std::endl;
   auto *entry = source->findEntry(entryname);
   if (entry == nullptr) return 1;
 
