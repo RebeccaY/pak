@@ -5,7 +5,7 @@ Release: 1
 License: GPLv2
 Group: System
 Source: pak-0.1.0.tar.gz
-Source0: http://dennisk.customer.netspace.net.au/pak/pak-0.1.0.tar.gz
+#Source0: http://dennisk.customer.netspace.net.au/pak/pak-0.1.0.tar.gz
 
 URL: http://dennisk.customer.netspace.net.au/pak.html
 Distribution: Fedora

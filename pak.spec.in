@@ -5,7 +5,7 @@ Release: 1
 License: GPLv2
 Group: System
 Source: @PACKAGE@-@VERSION@.tar.gz
-Source0: http://dennisk.customer.netspace.net.au/pak/@PACKAGE@-@VERSION@.tar.gz
+#Source0: http://dennisk.customer.netspace.net.au/pak/@PACKAGE@-@VERSION@.tar.gz
 
 URL: http://dennisk.customer.netspace.net.au/pak.html
 Distribution: Fedora
