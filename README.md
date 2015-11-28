@@ -1,6 +1,11 @@
+PAK
+===
+
 Pak allows you to create, edit and extract files from PAK files for
 Quake and Quake engine based games.
 
+About this program
+------------------
 PAK files are little more than an archive, similar to ZIP or TAR files.
 They have internal directories, subdirectories and files.  Maps for
 Quake/Quake 2 for example, are .BSP files stored under a 'maps' directory.
@@ -44,31 +49,38 @@ directory.
  Display licence.
 
 
-Examples:
+Examples
+--------
 
-# pak -i test.pak -d /storage/ulysses This creates a new file
-called test.pak, which will contain the contents of the directory
+	pak -i test.pak -d /storage/ulysses
+
+This creates a new file called test.pak, which will contain the contents of the directory
 /storage/ulysses
 
-# pak -o test.pak -d /temp This extracts the contents of test.pak to
-the /temp directory
+	pak -o test.pak -d /temp
 
-# pak -i test.pak -p /sound/ogre -d /storage/ogre This imports the
-files/directories under storage/ogre into the pak file, placing them
+This extracts the contents of test.pak to the /temp directory
+
+	pak -i test.pak -p /sound/ogre -d /storage/ogre
+
+This imports the files/directories under storage/ogre into the pak file, placing them
 within the pak under /sound/ogre
 
-# pak -i test.pak -p /sound/ogre -D pain.wav The same as above, but
-inserts pain.wav in the pak under /sound/ogre
+	pak -i test.pak -p /sound/ogre -D pain.wav
 
-# pak -e file.pak -p sound -d target Exports the 'sound' directory in
-file.pak to directory 'target'.
+The same as above, but inserts pain.wav in the pak under /sound/ogre
 
-# pak -e file,pak -D sound/misc/basekey.wav Exports the file
-sound/misc/basekey.wav
+	pak -e file.pak -p sound -d target
+
+Exports the 'sound' directory in file.pak to directory 'target'.
+
+	pak -e file,pak -D sound/misc/basekey.wav
+
+Exports the file sound/misc/basekey.wav
 
 
-Notes:
-
+Notes
+-----
 
 * The full path cannot exceed 56 characters.  If you are importing
 files and directories, the total length of the directory names and
