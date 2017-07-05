@@ -67,7 +67,7 @@ static void print_help(void)
 	      "import files from.\n"
               "This option when exporting selects where to export the files to.\n\n"
               "Example: pak -i test.pak -d /windows/ogre -p sound\n"
-              "Import the directory tree under windows/ogre into the file test.pak\n";
+              "Import the directory tree under windows/ogre into the file test.pak\n"
 	      "under the 'sound' directory.";
 }
 

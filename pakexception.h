@@ -43,7 +43,7 @@ public:
   PakExceptionIndexOutOfRange(int index, int indexSize);
   virtual ~PakExceptionIndexOutOfRange() = default;
   virtual const char *what() const noexcept override { return "Index out of range"; }
-  virtual const char *where() const noexcept {return m_message.c_str(); }
+  virtual const char *where() const noexcept override {return m_message.c_str(); }
 private:
   int m_index;
   int m_indexSize;

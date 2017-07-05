@@ -47,7 +47,7 @@ class TreeItem
 {
 public:
 
-    explicit TreeItem ( const std::string o_label, TreeItem *o_parent = nullptr );
+    explicit TreeItem ( const std::string o_label = "root", TreeItem *o_parent = nullptr );
     ~TreeItem();
     void traverseForEachChild (void(Pak::*func)(TreeItem *), Pak *obj);
     void traverseForEachItem (void(Pak::*func)(DirectoryEntry &entry), Pak *obj);

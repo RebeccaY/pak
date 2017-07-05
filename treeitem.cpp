@@ -70,7 +70,7 @@ void TreeItem::traverseForEachItem(void(Pak::*func)(DirectoryEntry &item), Pak *
 }
 
 
-TreeItem::TreeItem(const std::string o_label = "root", TreeItem *o_parent)
+TreeItem::TreeItem(const std::string o_label, TreeItem *o_parent)
 {
   parent = o_parent;
   directoryLabel = o_label;
