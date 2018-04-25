@@ -19,10 +19,11 @@
  */
 
 #include "pak.h"
+#include "treeitem.h"
 
 
 Pak::Pak() : memused(0), verbose(false),
-    directoryOffset(12), directoryLength(0), numEntries(0),
+    directoryOffset(12), directoryLength(0), thisDirectoryEntryOffset(0), numEntries(0),
     m_rootEntry("root", nullptr), currentPakDataPosition(PAK_HEADER_SIZE),
     loadingDir(false)
 {
@@ -51,7 +52,7 @@ Pak::~Pak()
 }
 
 
-int Pak::open(const char *filename)
+int Pak::open(const char *filename, bool createIfNew)
 {
     try {
         file.open(filename, std::ios_base::in  | std::ios_base::out | std::ios_base::binary);
@@ -126,6 +127,7 @@ void Pak::resetPakDirectory()
 {
     directoryLength = 0;
     directoryOffset = 12;
+    thisDirectoryEntryOffset = 0;
     m_rootEntry.traverseForEachItem(&Pak::updateIndex, this);
 }
 
@@ -134,7 +136,7 @@ void Pak::deleteChild(TreeItem *entry, int row)
 {
 
     entry->deleteChildTree(row);
-    resetPakDirectory();
+    //resetPakDirectory();
 
 }
 
@@ -144,7 +146,7 @@ void Pak::deleteEntry(TreeItem *root, const int row)
         throw PakException("Invalid directory", "Attempting to delete non-existant directory.");
     }
     root->deleteItem(row);
-    resetPakDirectory();
+    //resetPakDirectory();
 }
 
 
@@ -263,11 +265,12 @@ int Pak::writePak(const char *filename)
 
     if (file.is_open()) {
         m_rootEntry.traverseForEachItem(&Pak::loadData, this);
-        directoryLength = 0; // Reset directory length
+        resetPakDirectory();
+        //directoryLength = 0; // Reset directory length
         // as this will be calculated on the fly when
         // writing the pak file.  We can discard the current value
         // (even though it may end up the same).
-
+        std::cout << "Loading data....\n";
         file.close();
     } // Load data, if the current pak is relating to an existing file.
     // If the current pak is not relating to an existing file, dont load
@@ -276,7 +279,6 @@ int Pak::writePak(const char *filename)
 
     // Close the pakFile at the end, as we will be opening a new one
     // based on the file name provided.
-
     try {
         file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 
@@ -326,13 +328,14 @@ void Pak::writeEntry(DirectoryEntry &entry)
 {
     file.seekp(entry.getPosition());
     file.write(entry.data(), entry.getLength());
-    file.seekp(directoryOffset + directoryLength);
+    file.seekp(directoryOffset + thisDirectoryEntryOffset);
+    thisDirectoryEntryOffset += DIRECTORY_ENTRY_SIZE;
     file.write(entry.filename.data(), PAK_DATA_LABEL_SIZE);
     int32_t position = entry.getPosition();
     file.write(reinterpret_cast<char *>(&position), sizeof(int32_t));
     int length = entry.getLength();
     file.write(reinterpret_cast<char *>(&length), sizeof(int32_t));
-    directoryLength += DIRECTORY_ENTRY_SIZE;
+   // directoryLength += DIRECTORY_ENTRY_SIZE;
     return;
 }
 

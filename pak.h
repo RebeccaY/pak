@@ -73,7 +73,7 @@ public:
     Pak();
     ~Pak();
 
-    int open(const char *filename);
+    int open(const char *filename, bool createIfNew = false);
     int close();
     int exportPak(const char *exportPath);
     int exportDirectory(const char *exportPath, TreeItem *rootItem = nullptr);
@@ -100,6 +100,7 @@ private:
     std::array<char, 4> signature;
     int32_t directoryOffset;
     int32_t directoryLength;
+    int32_t thisDirectoryEntryOffset;
     int numEntries;
 // std::vector<DirectoryEntry> entries;
     TreeItem m_rootEntry;
