@@ -483,20 +483,18 @@ void Pak::printChild(TreeItem *item)
             printChild(item->child(x));
         }
     }
-    std::cout << item->label();
+   /* std::cout << item->label(); // This prints the tree entry.  Normally we only want to see the actual items.  So this
+    // is commented out.
     if (item->paren() != nullptr) {
         std::cout << " belongs to " << item->paren()->label() << std::endl;
-
+     
 
     } else {
         std::cout << std::endl;
     }
-
+  */
     for (auto x = item->begin(); x != item->end(); ++x) {
-        std::cout << x->filename.data() << " belongs to ";
-        std::cout << item->label() << std::endl;
-        std::cout << "Size : " << x->getLength() << std::endl;
-        std::cout << "Position " << x->getPosition() << std::endl;
+        std::cout << x->filename.data() << '\t' << x->getLength() << " bytes.\n";
     }
     return;
 }

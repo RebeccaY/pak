@@ -59,6 +59,7 @@ static void print_help(void)
 	      " -p Internal pak path to use.\t\t"
 	      " -D File to import/export.\n"
               " -v Increase verbosity.\n"
+              " -l List contents of PAK file.\n"
               "\nPak will either import a directory tree into a pak file, or export a pak\n"
               "files contents into a directory tree.\n"
               "Using it easy.  Just pass the filename to the -i option to import files into\n"
@@ -113,7 +114,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    while ((optch = getopt(argc, argv, "x:D:p:a:A:e:i:d:Vv")) != -1) {
+    while ((optch = getopt(argc, argv, "l:x:D:p:a:A:e:i:d:Vv")) != -1) {
         switch (optch) {
         case 'x': // Delete
         case 'V': // Licence
@@ -141,6 +142,12 @@ int main(int argc, char **argv)
         case 'i': // import
             importpak = true;
             pakfilename = optarg;
+            break;
+        case 'l': // List
+            pakfilename = optarg;
+            Pak pak(pakfilename.c_str());
+            pak.printChild(pak.rootEntry());
+           // pak.rootEntry()->traverseForEachChild(&Pak::printChild, &pak);
             break;
         }			// End switch.
     }				// End while.

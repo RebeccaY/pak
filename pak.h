@@ -90,6 +90,9 @@ public:
     void setVerbose(bool verbosity);
     std::fstream &getFileHandle(void);
     int addEntry(std::string path, const char*filename, TreeItem *rootItem);
+#ifdef CLI
+    void printChild(TreeItem *item);
+#endif
 private:
     size_t memused;
     bool verbose;
@@ -107,9 +110,7 @@ private:
 
     void resetPakDirectory();
     void makeDirectoryTree(TreeItem *item);
-#ifdef CLI
-    void printChild(TreeItem *item);
-#endif
+
     void loadDir(DirectoryEntry entry);
     int writePakDir(TreeItem *item);
     void loadData(DirectoryEntry &entry);
