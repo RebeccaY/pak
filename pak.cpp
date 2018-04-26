@@ -265,7 +265,6 @@ int Pak::writePak(const char *filename)
 
     if (file.is_open()) {
         m_rootEntry.traverseForEachItem(&Pak::loadData, this);
-        resetPakDirectory();
         //directoryLength = 0; // Reset directory length
         // as this will be calculated on the fly when
         // writing the pak file.  We can discard the current value
@@ -279,6 +278,7 @@ int Pak::writePak(const char *filename)
 
     // Close the pakFile at the end, as we will be opening a new one
     // based on the file name provided.
+    resetPakDirectory();
     try {
         file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
 
@@ -335,7 +335,7 @@ void Pak::writeEntry(DirectoryEntry &entry)
     file.write(reinterpret_cast<char *>(&position), sizeof(int32_t));
     int length = entry.getLength();
     file.write(reinterpret_cast<char *>(&length), sizeof(int32_t));
-   // directoryLength += DIRECTORY_ENTRY_SIZE;
+    //directoryLength += DIRECTORY_ENTRY_SIZE;
     return;
 }
 
