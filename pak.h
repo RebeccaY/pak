@@ -52,6 +52,7 @@
 #include "qfunc.h"
 #endif
 
+using pakSignature = std::array<char, 4>;
 
 enum Errors {
     NO_ERROR,
@@ -97,7 +98,7 @@ private:
     size_t memused;
     bool verbose;
     std::string pakFile;
-    std::array<char, 4> signature;
+    pakSignature signature;
     int32_t directoryOffset;
     int32_t directoryLength;
     int32_t thisDirectoryEntryOffset;

@@ -46,7 +46,7 @@ public:
     ~DirectoryEntry();
     const char *data();
     void clear();
-    std::array<char, 56> filename;
+    pakDataLabel filename;
 
     int loadData ( std::fstream &fin ); // stream should be already open
     int loadData( const char *filename); // load data from file.

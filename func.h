@@ -49,15 +49,16 @@ enum class fileTypes {
 const int PAK_HEADER_SIZE = 12;
 const int PAK_DATA_LABEL_SIZE = 56;
 const int DIRECTORY_ENTRY_SIZE = 64;
+using pakDataLabel = std::array< char, int(PAK_DATA_LABEL_SIZE) >;
 
 bool fexists(std::string filename);
 #ifdef CLI
-std::string absoluteFileName(std::array<char, PAK_DATA_LABEL_SIZE> fname);
+std::string absoluteFileName(pakDataLabel fname);
 #endif
-std::string arrayToString(std::array< char, int(PAK_DATA_LABEL_SIZE) > &filename);
+std::string arrayToString(pakDataLabel &filename);
 
-void stringToArray(std::string s, std::array<char, PAK_DATA_LABEL_SIZE> &arrai);
-void clearArrayAfterNull( std::array<char, PAK_DATA_LABEL_SIZE> &array);
+void stringToArray(std::string s, pakDataLabel &arrai);
+void clearArrayAfterNull(pakDataLabel &array);
 
 #ifdef CLI
 std::string getFileName(const std::string &filename);

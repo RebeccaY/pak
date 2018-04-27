@@ -44,7 +44,7 @@ unsigned long get_mem_total() {
 std::string getFileName(const std::string &filename)
 {
     std::string finalname;
-    finalname.reserve(56);
+    finalname.reserve(PAK_DATA_LABEL_SIZE);
 
 #ifdef __linux
     const auto it = std::find(filename.rbegin(), filename.rend(), '/');
@@ -62,7 +62,7 @@ std::string getFileName(const std::string &filename)
 #endif
 
 #ifdef CLI
-std::string absoluteFileName(std::array< char, int(PAK_DATA_LABEL_SIZE) > fname)
+std::string absoluteFileName(pakDataLabel fname)
 {
     std::string filename;
     filename.reserve(PAK_DATA_LABEL_SIZE);
@@ -83,7 +83,7 @@ std::string absoluteFileName(std::array< char, int(PAK_DATA_LABEL_SIZE) > fname)
 
 #endif
 
-std::string arrayToString(std::array<char, (PAK_DATA_LABEL_SIZE)> &filename)
+std::string arrayToString(pakDataLabel &filename)
 {
     std::string filename_stringified(PAK_DATA_LABEL_SIZE, '\0');
     std::copy(filename.begin(), filename.end(), filename_stringified.begin());
@@ -93,7 +93,7 @@ std::string arrayToString(std::array<char, (PAK_DATA_LABEL_SIZE)> &filename)
 
 
 
-void stringToArray(std::string s, std::array< char, int(PAK_DATA_LABEL_SIZE) > &arrai)
+void stringToArray(std::string s, pakDataLabel &arrai)
 {
     assert(s.size() <= PAK_DATA_LABEL_SIZE);
     const auto endpos = std::copy(s.begin(), s.end(), arrai.begin());
@@ -103,7 +103,7 @@ void stringToArray(std::string s, std::array< char, int(PAK_DATA_LABEL_SIZE) > &
 
 }
 
-void clearArrayAfterNull ( std::array< char, int ( PAK_DATA_LABEL_SIZE ) >& array ) {
+void clearArrayAfterNull ( pakDataLabel& array ) {
     auto pos = std::find ( array.begin(), array.end(), char ( 0 ) );
     if ( pos == array.end() ) {
         return;
