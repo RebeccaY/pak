@@ -145,8 +145,13 @@ int main(int argc, char **argv)
             break;
         case 'l': // List
             pakfilename = optarg;
-            Pak pak(pakfilename.c_str());
-            pak.printChild(pak.rootEntry());
+            try {
+                Pak pak(pakfilename.c_str());
+                pak.printChild(pak.rootEntry());
+            } catch (PakException &e) {
+                exceptionHander(e);
+                return 1;
+            }
            // pak.rootEntry()->traverseForEachChild(&Pak::printChild, &pak);
             break;
         }			// End switch.
@@ -247,21 +252,21 @@ int main(int argc, char **argv)
 
 
     if (importpak && !pakPath) {
-        std::cout << "Creating " << pakfilename << std::endl;
-        Pak pak;
-        if (verbose) {
-            pak.setVerbose(true);
-        }
-        if (workingpath.empty()) {
-            workingpath = ".";
-        }
         try {
+            Pak pak(pakfilename.c_str());
+            if (verbose) {
+                pak.setVerbose(true);
+            }
+            if (workingpath.empty()) {
+                workingpath = ".";
+            }
+
             pak.importDirectory(workingpath.c_str(), nullptr);
             chdir(currentPath);
             pak.writePak(pakfilename.c_str());
+            pak.close();
         } catch (PakException &e) {
             exceptionHander(e);
-            pak.close();
         }
         // pak.test();
     }

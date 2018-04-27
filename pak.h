@@ -73,7 +73,7 @@ public:
     Pak();
     ~Pak();
 
-    int open(const char *filename, bool createIfNew = false);
+    int open(const char *filename);
     int close();
     int exportPak(const char *exportPath);
     int exportDirectory(const char *exportPath, TreeItem *rootItem = nullptr);

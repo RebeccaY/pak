@@ -52,13 +52,25 @@ Pak::~Pak()
 }
 
 
-int Pak::open(const char *filename, bool createIfNew)
+int Pak::open(const char *filename)
 {
-    try {
-        file.open(filename, std::ios_base::in  | std::ios_base::out | std::ios_base::binary);
+    if (fexists(filename) == false) {
+        try {
+        std::cout << fexists(filename) << std::endl;
+        file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
     } catch (std::istream::failure &e) {
         throw PakException("Could not open file", filename);
+        }
+    pakFile = filename;
+    return 0;
     }
+    
+    try {
+            file.open(filename, std::ios_base::in  | std::ios_base::out | std::ios_base::binary);
+        } catch (std::istream::failure &e) {
+            throw PakException("Could not open file", filename);
+        }
+    
     try {
         file.read(signature.data(), signature.size());
         file.read(reinterpret_cast<char *>(&directoryOffset), sizeof(int32_t));
@@ -96,11 +108,13 @@ int Pak::open(const char *filename, bool createIfNew)
     } catch (std::istream::failure &e) {
         throw (PakException("File not valid", "Error reading directory.  File is corrupt or not a PAK file."));
     }
+
     pakFile = filename;
 
     return 0;
 
 }
+
 TreeItem *Pak::addChild(stringList &dirList, TreeItem *entry)
 {
     if (dirList.empty()) {
@@ -269,16 +283,8 @@ int Pak::writePak(const char *filename)
 
     if (file.is_open()) {
         m_rootEntry.traverseForEachItem(&Pak::loadData, this);
-        //directoryLength = 0; // Reset directory length
-        // as this will be calculated on the fly when
-        // writing the pak file.  We can discard the current value
-        // (even though it may end up the same).
-        std::cout << "Loading data....\n";
         file.close();
-    } // Load data, if the current pak is relating to an existing file.
-    // If the current pak is not relating to an existing file, dont load
-    // because this would have been constructed from imported files,
-    // and the data is all already loaded.
+    }
 
     // Close the pakFile at the end, as we will be opening a new one
     // based on the file name provided.

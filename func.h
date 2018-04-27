@@ -50,7 +50,7 @@ const int PAK_HEADER_SIZE = 12;
 const int PAK_DATA_LABEL_SIZE = 56;
 const int DIRECTORY_ENTRY_SIZE = 64;
 
-
+bool fexists(std::string filename);
 #ifdef CLI
 std::string absoluteFileName(std::array<char, PAK_DATA_LABEL_SIZE> fname);
 #endif

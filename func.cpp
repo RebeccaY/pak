@@ -22,6 +22,16 @@
 
 #include "func.h"
 
+
+bool fexists(std::string filename)
+{
+  bool x;
+  std::ifstream ifile(filename.c_str());
+  x = ifile.is_open();
+  ifile.close();
+  return x;
+}
+
 unsigned long get_mem_total() {
 
   //  struct sysinfo info;
