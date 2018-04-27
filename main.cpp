@@ -20,11 +20,13 @@
 
 #include <iostream>
 
-#ifdef __linux
-#include <unistd.h>
-#include <linux/limits.h>
-#else
-#include "getopt.h"
+#ifdef   __linux
+    #include <unistd.h>
+    #include <linux/limits.h>
+#elif __WIN32
+    #include "getopt.h"
+#elif __APPLE__
+    #include <unistd.h>
 #endif
 
 #include <cassert>
@@ -60,16 +62,14 @@ static void print_help(void)
 	      " -D File to import/export.\n"
               " -v Increase verbosity.\n"
               " -l List contents of PAK file.\n"
-              "\nPak will either import a directory tree into a pak file, or export a pak\n"
-              "files contents into a directory tree.\n"
-              "Using it easy.  Just pass the filename to the -i option to import files into\n"
+              "Pass the filename to the -i option to import files into\n"
               "a new pak file, or pass the filename to the -e option to export files from\n"
               "an existing pak file.  The -d option when importing selects where to\n"
 	      "import files from.\n"
               "This option when exporting selects where to export the files to.\n\n"
               "Example: pak -i test.pak -d /windows/ogre -p sound\n"
               "Import the directory tree under windows/ogre into the file test.pak\n"
-	      "under the 'sound' directory.";
+	      "under the 'sound' directory." << std::endl;
 }
 
 

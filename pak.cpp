@@ -194,8 +194,10 @@ void Pak::makeDirectoryTree(TreeItem *item)
     for (auto x = 0; x < item->childCount(); ++x) {
 #ifdef __linux
         mkdir(item->child(x)->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
-#else
+#elif __WIN32
         mkdir(item->child(x)->label().c_str());
+#elif __APPLE__
+        mkdir(item->child(x)->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
 #endif
         chdir(item->child(x)->label().c_str());
         makeDirectoryTree(item->child(x));
@@ -236,8 +238,10 @@ int Pak::exportDirectory(const char *exportPath, TreeItem *item)
     // we will want to create it first.
 #ifdef __linux
     mkdir(item->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
-#else
+#elif __WIN32
     mkdir(item->label().c_str());
+#elif __APPLE__
+    mkdir(item->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
 #endif
     chdir(item->label().c_str());
     makeDirectoryTree(item);

@@ -22,6 +22,7 @@
 #define PAKEXCEPTION_H
 
 #include <stdexcept>
+#include <string>
 
 class PakException : public std::exception
 {
