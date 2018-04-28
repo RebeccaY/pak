@@ -168,9 +168,12 @@ void Pak::loadDir(DirectoryEntry entry)
 {
     // First, we get the position in the directory tree.
     stringList directoryList;
+    clearArrayAfterNull(entry.filename);
+    directoryList = tokenize(entry.filename);
+    /*
     auto pos = entry.filename.begin();
     //auto dirName = &entry.filename;
-    clearArrayAfterNull(entry.filename);
+    
     
     while (pos != entry.filename.end()) {
         auto fit = std::find(pos, entry.filename.end(), '/');
@@ -192,7 +195,7 @@ void Pak::loadDir(DirectoryEntry entry)
         pos++;
     }
 
-
+   */
     auto x = addChild(directoryList, &m_rootEntry);
     x->appendItem(entry);
 }
