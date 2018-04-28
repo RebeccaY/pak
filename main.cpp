@@ -61,7 +61,7 @@ static void print_help(void)
 	      " -p Internal pak path to use.\t\t"
 	      " -D File to import/export.\n"
               " -v Increase verbosity.\n"
-              " -l List contents of PAK file.\n"
+              " -l List contents of PAK file.\n\n"
               "Pass the filename to the -i option to import files into\n"
               "a new pak file, or pass the filename to the -e option to export files from\n"
               "an existing pak file.  The -d option when importing selects where to\n"

@@ -1,11 +1,11 @@
 Summary: PAK file editor for Quake engine games
 Name: pak
-Version: 0.1.1
+Version: 0.2.0
 Release: 1
 License: GPLv2
 Group: System
-Source: pak-0.1.1.tar.gz
-#Source0: http://dennisk.customer.netspace.net.au/pak/pak-0.1.1.tar.gz
+Source: pak-0.2.0.tar.gz
+#Source0: http://dennisk.customer.netspace.net.au/pak/pak-0.2.0.tar.gz
 
 URL: http://dennisk.customer.netspace.net.au/pak.html
 Distribution: Fedora
