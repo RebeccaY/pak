@@ -128,7 +128,7 @@ void DirectoryEntry::exportFile(const char *path, std::fstream &fin)
 #ifndef CLI
     fout.open(absoluteFileName(filename).toStdString().c_str(), std::ios::binary | std::ios_base::out);
 #else 
-    fout.open(absoluteFileName(filename).c_str(), std::ios_base::out);
+    fout.open(absoluteFileName(filename).c_str(), std::ios::binary | std::ios_base::out);
 #endif
     fout.write(entryData.get() , m_length);
     fout.close();

@@ -106,7 +106,6 @@ private:
 // std::vector<DirectoryEntry> entries;
     TreeItem m_rootEntry;
     std::fstream file;
-    int currentPakDataPosition;
     bool loadingDir; // This is used by importDir so that when it calls itself, it knows whether is in the the process
     // of recursion, or just starting.
 

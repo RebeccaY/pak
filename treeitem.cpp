@@ -166,7 +166,7 @@ TreeItem *TreeItem::findChild(std::string searchTerm, bool create)
   if (create == false) {
       return nullptr;
     } else {
-      std::unique_ptr<TreeItem> x(new TreeItem(searchTerm, this));
+      std::unique_ptr<TreeItem> x = createTreeItem(searchTerm, this);
       appendChild(std::move(x));
       return childItems.back().get();
     }

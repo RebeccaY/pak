@@ -23,9 +23,8 @@
 
 
 Pak::Pak() : memused(0), verbose(false),
-    directoryOffset(12), directoryLength(0), thisDirectoryEntryOffset(0), numEntries(0),
-    m_rootEntry("root", nullptr), currentPakDataPosition(PAK_HEADER_SIZE),
-    loadingDir(false)
+    directoryOffset(PAK_HEADER_SIZE), directoryLength(0), thisDirectoryEntryOffset(0), numEntries(0),
+    m_rootEntry("root", nullptr), loadingDir(false)
 {
 
     file.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
@@ -56,7 +55,6 @@ int Pak::open(const char *filename)
 {
     if (fexists(filename) == false) {
         try {
-        std::cout << fexists(filename) << std::endl;
         file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
     } catch (std::istream::failure &e) {
         throw PakException("Could not open file", filename);
@@ -133,14 +131,14 @@ TreeItem *Pak::addChild(stringList &dirList, TreeItem *entry)
 void Pak::updateIndex(DirectoryEntry &entry)
 {
     entry.setPosition(directoryOffset);
-    directoryLength += DIRECTORY_ENTRY_SIZE;
-    directoryOffset += entry.getLength();
+    directoryLength = safeAdd(directoryLength, DIRECTORY_ENTRY_SIZE);
+    directoryOffset = safeAdd(directoryOffset, entry.getLength());
 }
 
 void Pak::resetPakDirectory()
 {
     directoryLength = 0;
-    directoryOffset = 12;
+    directoryOffset = PAK_HEADER_SIZE;
     thisDirectoryEntryOffset = 0;
     m_rootEntry.traverseForEachItem(&Pak::updateIndex, this);
 }
@@ -148,10 +146,7 @@ void Pak::resetPakDirectory()
 
 void Pak::deleteChild(TreeItem *entry, int row)
 {
-
     entry->deleteChildTree(row);
-    //resetPakDirectory();
-
 }
 
 void Pak::deleteEntry(TreeItem *root, const int row)
@@ -160,7 +155,6 @@ void Pak::deleteEntry(TreeItem *root, const int row)
         throw PakException("Invalid directory", "Attempting to delete non-existant directory.");
     }
     root->deleteItem(row);
-    //resetPakDirectory();
 }
 
 
@@ -170,32 +164,6 @@ void Pak::loadDir(DirectoryEntry entry)
     stringList directoryList;
     clearArrayAfterNull(entry.filename);
     directoryList = tokenize(entry.filename);
-    /*
-    auto pos = entry.filename.begin();
-    //auto dirName = &entry.filename;
-    
-    
-    while (pos != entry.filename.end()) {
-        auto fit = std::find(pos, entry.filename.end(), '/');
-        if (fit != entry.filename.end()) {
-            auto x = fit - pos;
-            std::string s;
-            s.resize(x);
-            std::copy(pos, fit, s.begin());
-
-            if (s == "..") {
-                s = "dotdot";
-            } // This is a workaround for the Quake 2 pak0.pak file.
-            // It contains as a path '..' for the ctank, which screws things up for this program
-            // when trying to create this directories.
-            // We'll convert this back to '..' when importing.
-            directoryList.push_back(s);
-            pos = fit;
-        }
-        pos++;
-    }
-
-   */
     auto x = addChild(directoryList, &m_rootEntry);
     x->appendItem(entry);
 }
@@ -348,7 +316,6 @@ void Pak::writeEntry(DirectoryEntry &entry)
     file.write(reinterpret_cast<char *>(&position), sizeof(int32_t));
     int length = entry.getLength();
     file.write(reinterpret_cast<char *>(&length), sizeof(int32_t));
-    //directoryLength += DIRECTORY_ENTRY_SIZE;
     return;
 }
 
@@ -435,7 +402,6 @@ int Pak::importDirectory(const char *importPath, TreeItem *rootItem)
 #endif
     struct dirent *entry;
     struct stat statbuf;
-    //struct statfs sstat;
     std::string tmp;
 
     if ((directory = opendir(importPath)) == NULL) {
@@ -446,7 +412,6 @@ int Pak::importDirectory(const char *importPath, TreeItem *rootItem)
 
     while ((entry = readdir(directory)) != NULL) {
         stat(entry->d_name, &statbuf);
-        //statfs(entry->d_name, &sstat);
 
         if (S_ISDIR(statbuf.st_mode)) {
 
@@ -499,16 +464,7 @@ void Pak::printChild(TreeItem *item)
             printChild(item->child(x));
         }
     }
-   /* std::cout << item->label(); // This prints the tree entry.  Normally we only want to see the actual items.  So this
-    // is commented out.
-    if (item->paren() != nullptr) {
-        std::cout << " belongs to " << item->paren()->label() << std::endl;
-     
 
-    } else {
-        std::cout << std::endl;
-    }
-  */
     for (auto x = item->begin(); x != item->end(); ++x) {
         std::cout << x->filename.data() << '\t' << x->getLength() << " bytes.\n";
     }
