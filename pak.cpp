@@ -144,11 +144,42 @@ void Pak::resetPakDirectory()
 }
 
 
+void Pak::deleteChild(const std::string path)
+{
+    TreeItem *treeToDelete = m_rootEntry.findTreeItem(path);
+    if (treeToDelete == nullptr) { // It wasn't found.
+        return;
+    }
+    if (treeToDelete == &m_rootEntry) { // We are not going
+        // to delete the root folder either.
+        throw PakException("Invalid directory", "Will not delete root directory.\n If you wan't an empty PAK file, just delete it.");
+    }
+    deleteChild(treeToDelete->paren(),treeToDelete->row());
+}
+
 void Pak::deleteChild(TreeItem *entry, int row)
 {
     entry->deleteChildTree(row);
 }
 
+
+void Pak::deleteEntry(const std::string entry)
+{ // Incomplete.
+    TreeItem *tItem;
+    std::string entryItem;
+    std::string path;
+    auto slashPos = entry.find_last_of('/');
+    if (slashPos == std::string::npos) {
+        // If no slash, assume we are referring to a top level (root) item.
+        tItem = &m_rootEntry;
+    }
+    // Otherwise, take the part after the slash as the entry (file), and the part before as the path.
+    slashPos++;  // Advance one as we want the data after the slash.
+    path = entry.substr(0, slashPos);
+    entryItem = entry.substr(slashPos, entry.length());
+    std::cout << path << std::endl;
+    std::cout << entryItem << std::endl;
+}
 void Pak::deleteEntry(TreeItem *root, const int row)
 {
     if (root == nullptr) {

@@ -54,6 +54,7 @@ public:
     void appendChild ( std::unique_ptr<TreeItem> child );
     void deleteChildTree( const int pos);
     void deleteChildTree( std::vector<std::unique_ptr<TreeItem>>::iterator it);
+    void deleteChildTree( const std::string searchTerm );
     void appendItem ( DirectoryEntry &entry );
     TreeItem *child ( int row ); // Retreive child.
     std::string label() const; // Returns the name of the directory
@@ -72,6 +73,7 @@ public:
     DirectoryEntry* findEntry ( const std::string searchTerm );
     TreeItem *parentItem();
     void deleteItem(const unsigned int row);
+    TreeItem *findTreeItem(const std::string path, const bool createIfNotfound = false);
 private:
     std::vector<std::unique_ptr<TreeItem>> childItems;
     std::vector<DirectoryEntry> items;

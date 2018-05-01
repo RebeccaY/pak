@@ -39,6 +39,10 @@ void TreeItem::deleteChildTree(std::vector< std::unique_ptr< TreeItem > >::itera
   childItems.erase(it);
 }
 
+void TreeItem::deleteChildTree( const std::string searchTerm )
+{
+  TreeItem *ptr = findChild(searchTerm);
+}
 
 void TreeItem::traverseForEachChild(void(Pak::*func)(TreeItem * ), Pak *obj)
 {
@@ -262,3 +266,17 @@ TreeItemItr &TreeItem::operator*()
 }
 
 
+TreeItem *TreeItem::findTreeItem(const std::string path,
+			      const bool createIfNotfound)
+{
+    if (path.empty()) {
+        return nullptr;
+    }
+    TreeItem *tItem = this;
+    stringList t = tokenize(path);
+
+    for (auto &x : t) {
+        tItem = tItem->findChild(x, createIfNotfound);
+    }
+    return tItem;
+}

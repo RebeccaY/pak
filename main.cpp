@@ -61,7 +61,8 @@ static void print_help(void)
 	      " -p Internal pak path to use.\t\t"
 	      " -D File to import/export.\n"
               " -v Increase verbosity.\n"
-              " -l List contents of PAK file.\n\n"
+              " -l List contents of PAK file.\n"
+              " -x eXise (delete) entry.\n\n"
               "Pass the filename to the -i option to import files into\n"
               "a new pak file, or pass the filename to the -e option to export files from\n"
               "an existing pak file.  The -d option when importing selects where to\n"
@@ -73,20 +74,6 @@ static void print_help(void)
 }
 
 
-static TreeItem *findTreeItem(const std::string path,
-			      TreeItem *rootEntry,
-			      const bool createIfNotfound = false)
-{
-    if (path.empty()) {
-        return nullptr;
-    }
-    TreeItem *tItem = rootEntry;
-    stringList t = tokenize(path);
-    for (auto &x : t) {
-        tItem = tItem->findChild(x, true);
-    }
-    return tItem;
-}
 
 int main(int argc, char **argv)
 {
@@ -99,6 +86,7 @@ int main(int argc, char **argv)
     bool importpak = false;
     bool exportpak = false;
     bool workWithFile = false;
+    bool deleteStuff = false;
     bool verbose = false;
     bool pakPath = false;
     char *currentPath;
@@ -117,6 +105,9 @@ int main(int argc, char **argv)
     while ((optch = getopt(argc, argv, "l:x:D:p:a:A:e:i:d:Vv")) != -1) {
         switch (optch) {
         case 'x': // Delete
+            deleteStuff = true;
+            pakfilename = optarg;
+            break;
         case 'V': // Licence
             printLicense();
             return 0;
@@ -157,7 +148,28 @@ int main(int argc, char **argv)
         }			// End switch.
     }				// End while.
 
-
+    if ( deleteStuff && !workWithFile) {
+        try {
+            Pak pak(pakfilename.c_str());
+            pak.deleteChild(workingpath);
+            pak.writePak(pakfilename.c_str());
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+        }
+    }
+    
+        if ( deleteStuff && workWithFile) {
+        try {
+            Pak pak(pakfilename.c_str());
+            pak.deleteEntry(workingpath);
+            pak.writePak(pakfilename.c_str());
+        } catch (PakException &e) {
+            exceptionHander(e);
+            return 1;
+        }
+    }
+    
     if ( workWithFile && importpak ) {
         if ( !insertPath.empty() ) {
             auto insertPathPos = insertPath.end();
@@ -176,7 +188,7 @@ int main(int argc, char **argv)
 
         try {
             Pak pak(pakfilename.c_str());
-            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(), true);
+            TreeItem *tItem = pak.rootEntry()->findTreeItem(insertPath, true);
             if ( tItem == nullptr ) {
                 tItem = pak.rootEntry();
             }
@@ -196,7 +208,7 @@ int main(int argc, char **argv)
       }
         try {
             Pak pak(pakfilename.c_str());
-            TreeItem *tItem = findTreeItem(workingpath, pak.rootEntry(), false);
+            TreeItem *tItem = pak.rootEntry()->findTreeItem(workingpath, false);
             if (pak.exportEntry(workingpath, tItem)) {
 	      std::cout << "No entry named " << workingpath << " : Check the name and try again.\n";
 	      return 1;
@@ -213,7 +225,7 @@ int main(int argc, char **argv)
         insertPath.append("/");
         try {
             Pak pak(pakfilename.c_str());
-            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(),true);
+            TreeItem *tItem = pak.rootEntry()->findTreeItem(insertPath, true);
             pak.importDirectory(workingpath.c_str(), tItem);
             pak.writePak(pakfilename.c_str());
         } catch (PakException &e) {
@@ -227,7 +239,7 @@ int main(int argc, char **argv)
         insertPath.append("/");
         try {
             Pak pak(pakfilename.c_str());
-            TreeItem *tItem = findTreeItem(insertPath, pak.rootEntry(), false);
+            TreeItem *tItem = pak.rootEntry()->findTreeItem(insertPath, false);
             pak.exportDirectory(workingpath.c_str(), tItem);
         } catch (PakException &e) {
             exceptionHander(e);

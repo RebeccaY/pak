@@ -20,13 +20,14 @@
 
 #ifndef PAK_H
 #define PAK_H
-
+#include <iostream>
 #include <iostream>
 #include <fstream>
 #include <array>
 #include <cstdint>
 #include <vector>
 #include <cstring>
+#include <string>
 #include <set>
 #include <algorithm>
 #include <sys/types.h>
@@ -85,7 +86,9 @@ public:
     void reset(); // Clears the pak file.  Start new.  // Loses all changes
     TreeItem *addChild(stringList &dirList, TreeItem *entry);
     void deleteChild(TreeItem *entry, const int row);
+    void deleteChild(const std::string path);
     void deleteEntry(TreeItem *root, const int row);
+    void deleteEntry(const std::string entry); // Incomplete.
     void updateIndex(DirectoryEntry &entry);
     TreeItem *rootEntry(void);
     void setVerbose(bool verbosity);
