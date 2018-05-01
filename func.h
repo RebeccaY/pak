@@ -29,6 +29,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "pakexception.h"
 
 using stringList = std::vector<std::string>;
 
@@ -63,6 +64,8 @@ void clearArrayAfterNull(pakDataLabel &array);
 #ifdef CLI
 std::string getFileName(const std::string &filename);
 #endif
+
+int32_t safeAdd(int32_t a, int32_t b);
 
 template <typename T>
 stringList tokenize(T &text)

@@ -310,7 +310,7 @@ void Pak::writeEntry(DirectoryEntry &entry)
     file.seekp(entry.getPosition());
     file.write(entry.data(), entry.getLength());
     file.seekp(directoryOffset + thisDirectoryEntryOffset);
-    thisDirectoryEntryOffset += DIRECTORY_ENTRY_SIZE;
+    thisDirectoryEntryOffset = safeAdd(thisDirectoryEntryOffset, DIRECTORY_ENTRY_SIZE);
     file.write(entry.filename.data(), PAK_DATA_LABEL_SIZE);
     int32_t position = entry.getPosition();
     file.write(reinterpret_cast<char *>(&position), sizeof(int32_t));
@@ -368,7 +368,7 @@ int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
     newEntry.setLength(filesize);
     newEntry.loadData(filename);
     newEntry.setPosition(directoryOffset);
-    directoryOffset += filesize;
+    directoryOffset = safeAdd(directoryOffset, filesize);
     rootItem->appendItem(newEntry);
     return NO_ERROR;
 }

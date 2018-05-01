@@ -22,6 +22,19 @@
 
 #include "func.h"
 
+constexpr int32_t max = std::numeric_limits<int32_t>::max();
+constexpr int32_t min = std::numeric_limits<int32_t>::min();
+
+static inline bool safeAddCheck(int32_t A, int32_t B)
+{
+  if(A < 0 && B < 0) 
+    return B < min - A;
+  if(A > 0 && B > 0)
+    return B > max - A;
+
+  return false;
+}
+
 
 bool fexists(std::string filename)
 {
@@ -116,4 +129,12 @@ void clearArrayAfterNull ( pakDataLabel& array ) {
     return;
 }
 
+
+int32_t safeAdd(int32_t a, int32_t b)
+{
+  if(safeAddCheck(a,b) == true) {
+    throw (PakException("File too large.", "PAK files cannot exceed 2GB in size." ));
+  }
+  return a + b;
+}
 
