@@ -144,8 +144,12 @@ void Pak::resetPakDirectory()
 }
 
 
-void Pak::deleteChild(const std::string path)
+void Pak::deleteChild(std::string path)
 {
+    if (path.back() != '/') {  // There has to be a '/' at the end
+      // to ensure that it is tokenised correctly.
+      path.append("/");
+    }
     TreeItem *treeToDelete = m_rootEntry.findTreeItem(path);
     if (treeToDelete == nullptr) { // It wasn't found.
         return;
@@ -165,20 +169,39 @@ void Pak::deleteChild(TreeItem *entry, int row)
 
 void Pak::deleteEntry(const std::string entry)
 { // Incomplete.
-    TreeItem *tItem;
+    TreeItem *tItem = nullptr;
     std::string entryItem;
     std::string path;
     auto slashPos = entry.find_last_of('/');
+
     if (slashPos == std::string::npos) {
         // If no slash, assume we are referring to a top level (root) item.
         tItem = &m_rootEntry;
+    } else {
+      // Otherwise, take the part after the slash as the entry (file), and the part before as the path.
+      slashPos++;  // Advance one as we want the data after the slash.
+      path = entry.substr(0, slashPos);
+      entryItem = entry.substr(slashPos, entry.length());
+      tItem = m_rootEntry.findTreeItem(path);
+
+      if (tItem == nullptr) { // It wasn't found.
+	std::string message;
+	message += "Could not find path ";
+	message += path;
+	throw PakException("Invalid Path", message.c_str());
+      }
     }
-    // Otherwise, take the part after the slash as the entry (file), and the part before as the path.
-    slashPos++;  // Advance one as we want the data after the slash.
-    path = entry.substr(0, slashPos);
-    entryItem = entry.substr(slashPos, entry.length());
-    std::cout << path << std::endl;
-    std::cout << entryItem << std::endl;
+
+    auto row = tItem->findEntryRow(entryItem);
+    
+    if (row == -1) {
+      std::string message;
+      message += "Attempting to delete non-existant item ";
+      message += entryItem;
+      throw PakException("Invalid Item", message.c_str());
+    }
+    
+    tItem->deleteItem(row);
 }
 void Pak::deleteEntry(TreeItem *root, const int row)
 {
@@ -313,7 +336,9 @@ int Pak::writePak(const char *filename)
 int Pak::exportEntry(std::string &entryname, TreeItem* source)
 {
   auto *entry = source->findEntry(entryname);
-  if (entry == nullptr) return 1;
+  if (entry == nullptr) {
+    throw PakException("Could not find entry.", entryname.c_str());
+    }
 
 #ifndef CLI // This uses QString
     entry->exportFile ( getFileName (QString(entryname.c_str()) ).toStdString().c_str(), file );

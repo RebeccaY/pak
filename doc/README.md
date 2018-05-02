@@ -26,13 +26,17 @@ Pak supports the following command line parameters
  directory will be added, but not the directory itself.  These will form
  the 'root' directory of the pak file.
 
-When exporting, the files/directories will be placed within this
-directory.
+ When exporting, the files/directories will be placed within this
+ directory.
+
+ When deleting, this is the path within the PAK file to delete.
 
 -D
  Import/export file.  Like the -d option, but works with files.  You can
  either add a file to the pak file, or extract a file.  When extracting,
  the full path must be specified.
+ 
+ When deleting, this is the file to delete.
 
 -p
  Internal pak path to use.  An existing pak file can contain directories
@@ -41,6 +45,14 @@ directory.
  For importing files or directories, the -p option exports only
  subdirectories, or imports to that directory.  This option allows you
  to specify where the file or directory tree will go.
+
+-l
+ List PAK file contents.
+ 
+-x filename.pak
+ Delete directory of file from PAK file.  Files are specified with the '-D'
+ parameter and directories with the '-d' parameter.  Note the directory
+ deletion is recursive.
 
 -v
  Verbose.  Print more information.
@@ -78,6 +90,11 @@ Exports the 'sound' directory in file.pak to directory 'target'.
 
 Exports the file sound/misc/basekey.wav
 
+        pak \-x file.pak \-d sound/ogre
+Delete 'sound/ogre' directory in the PAK file recursively.
+
+        pak \-x file.pak -D maps/e1m1.bsp
+Delete 'maps/e1m1.bsp' from the PAK file.
 
 Notes
 -----

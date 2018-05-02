@@ -86,7 +86,7 @@ public:
     void reset(); // Clears the pak file.  Start new.  // Loses all changes
     TreeItem *addChild(stringList &dirList, TreeItem *entry);
     void deleteChild(TreeItem *entry, const int row);
-    void deleteChild(const std::string path);
+    void deleteChild(std::string path);
     void deleteEntry(TreeItem *root, const int row);
     void deleteEntry(const std::string entry); // Incomplete.
     void updateIndex(DirectoryEntry &entry);

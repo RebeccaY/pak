@@ -39,11 +39,6 @@ void TreeItem::deleteChildTree(std::vector< std::unique_ptr< TreeItem > >::itera
   childItems.erase(it);
 }
 
-void TreeItem::deleteChildTree( const std::string searchTerm )
-{
-  TreeItem *ptr = findChild(searchTerm);
-}
-
 void TreeItem::traverseForEachChild(void(Pak::*func)(TreeItem * ), Pak *obj)
 {
   
@@ -212,6 +207,23 @@ DirectoryEntry* TreeItem::findEntry ( const std::string searchTerm )
     return nullptr;
 }
 
+int TreeItem::findEntryRow ( const std::string searchTerm )
+{
+
+  std::string absFile;
+  for (int x{0}; x < items.size(); x++)
+    {
+        absFile =  absoluteFileName(items[x].filename);
+      if ( std::equal(searchTerm.begin(), searchTerm.end(), absFile.begin()) )
+	{
+	  assert(x < items.size());
+	  return x;
+	}
+    }
+    return -1;
+}
+
+
 void TreeItem::appendItem(DirectoryEntry &entry)
 {
   // Check to see if there is an existing entry
@@ -277,6 +289,11 @@ TreeItem *TreeItem::findTreeItem(const std::string path,
 
     for (auto &x : t) {
         tItem = tItem->findChild(x, createIfNotfound);
+        if (tItem == nullptr) {
+          std::string message;
+          message += "Directory " + x + " could not be found.";
+          throw PakException("Invalid directory",message.c_str());
+        }
     }
     return tItem;
 }
