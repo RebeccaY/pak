@@ -20,8 +20,7 @@
 
 #ifndef PAK_H
 #define PAK_H
-#include <iostream>
-#include <iostream>
+
 #include <fstream>
 #include <array>
 #include <cstdint>
@@ -41,6 +40,9 @@
 
 #ifndef CLI
 #include <QDebug>
+#endif
+#ifdef CLI
+#include <iostream>
 #endif
 
 

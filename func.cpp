@@ -82,8 +82,10 @@ std::string absoluteFileName(pakDataLabel fname)
 
 #ifdef __linux
     const auto it = std::find(fname.rbegin(), fname.rend(), '/');
-#else
+#elif __WIN32
     const auto it = std::find(fname.rbegin(), fname.rend(), '\\');
+#elif __APPLE__
+    const auto it = std::find(fname.rbegin(), fname.rend(), '/');
 #endif
 
     const auto fit = it.base();

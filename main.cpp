@@ -36,6 +36,12 @@
 #include "pak.h"
 #include "version.h"
 
+static void printHeader(void)
+{
+       std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and related games.\n"
+		<< "(C) Dennis Katsonis, Dekay Software (2015).\t\tVersion " << VERSION << "\n\n";
+ 
+}
 static void printLicense(void)
 {
     std::cout << "This program is free software: you can redistribute it and/or modify\n"
@@ -89,15 +95,13 @@ int main(int argc, char **argv)
     bool deleteStuff = false;
     bool verbose = false;
     bool pakPath = false;
-    char *currentPath;
+    char *currentPath = nullptr;
 
 
     // auto memo = get_mem_total();
-
-    std::cout << "PAK: Build and exports PAK files for Quake, Quake 2 and related games.\n"
-              << "(C) Dennis Katsonis, Dekay Software (2015).\t\tVersion " << VERSION << "\n\n";
-
+    
     if (argc <= 1) {
+        printHeader();
         print_help();
         return 0;
     }
@@ -151,6 +155,9 @@ int main(int argc, char **argv)
     if ( deleteStuff && !workWithFile) {
         try {
             Pak pak(pakfilename.c_str());
+            if (verbose) {
+                pak.setVerbose(true);
+            }
             pak.deleteChild(workingpath);
             pak.writePak(pakfilename.c_str());
         } catch (PakException &e) {
@@ -162,6 +169,9 @@ int main(int argc, char **argv)
         if ( deleteStuff && workWithFile) {
         try {
             Pak pak(pakfilename.c_str());
+            if (verbose) {
+                pak.setVerbose(true);
+            }
             pak.deleteEntry(workingpath);
             pak.writePak(pakfilename.c_str());
         } catch (PakException &e) {
@@ -188,6 +198,10 @@ int main(int argc, char **argv)
 
         try {
             Pak pak(pakfilename.c_str());
+	    if (verbose) {
+                pak.setVerbose(true);
+            }
+
             TreeItem *tItem = pak.rootEntry()->findTreeItem(insertPath, true);
             if ( tItem == nullptr ) {
                 tItem = pak.rootEntry();
@@ -209,10 +223,7 @@ int main(int argc, char **argv)
         try {
             Pak pak(pakfilename.c_str());
             TreeItem *tItem = pak.rootEntry()->findTreeItem(workingpath, false);
-            if (pak.exportEntry(workingpath, tItem)) {
-	      std::cout << "No entry named " << workingpath << " : Check the name and try again.\n";
-	      return 1;
-	    }
+            pak.exportEntry(workingpath, tItem);
         } catch (PakException &e) {
             exceptionHander(e);
             return 1;
@@ -239,6 +250,10 @@ int main(int argc, char **argv)
         insertPath.append("/");
         try {
             Pak pak(pakfilename.c_str());
+	    if (verbose) {
+                pak.setVerbose(true);
+            }
+
             TreeItem *tItem = pak.rootEntry()->findTreeItem(insertPath, false);
             pak.exportDirectory(workingpath.c_str(), tItem);
         } catch (PakException &e) {

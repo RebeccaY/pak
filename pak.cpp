@@ -323,7 +323,7 @@ int Pak::writePak(const char *filename)
     file.seekp(PAK_HEADER_SIZE);
 
     m_rootEntry.traverseForEachItem(&Pak::writeEntry, this);
-
+    
     file.seekp(std::ios::beg);
     file.write("PACK", signature.size());
     file.write(reinterpret_cast<char *>(&directoryOffset), sizeof(int32_t));
@@ -358,6 +358,7 @@ void Pak::reset()
     directoryLength = 0;
     directoryOffset = PAK_HEADER_SIZE;
     m_rootEntry.clear();
+    memused = 0;
 
 }
 
@@ -393,12 +394,8 @@ int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
 
 #ifndef CLI // This uses QString
     path += getFileName(filename).toStdString();
-
 #else
     path += getFileName(filename);
-    if (verbose) {
-        std::cout << "Adding " << filename << "\n";
-    }
 #endif
 
 #ifndef NDEBUG
@@ -426,6 +423,9 @@ int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
     newEntry.setPosition(directoryOffset);
     directoryOffset = safeAdd(directoryOffset, filesize);
     rootItem->appendItem(newEntry);
+    if (verbose) {
+      std::cout << path << "\t" << newEntry.getLength() << " bytes \n";
+    }
     return NO_ERROR;
 }
 

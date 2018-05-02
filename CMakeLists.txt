@@ -5,14 +5,14 @@ add_executable(pak exceptionhandler.cpp
 func.cpp main.cpp pak.cpp directoryentry.cpp
 treeitem.cpp pakexception.cpp)
 set (PACKAGE pak)
-set (VERSION 0.2.0)
+set (VERSION 0.3.0)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCLI")
 install(TARGETS pak RUNTIME DESTINATION bin)
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/man1/ DESTINATION share/man/man1)
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/doc/ DESTINATION share/doc/${PACKAGE})
 
 # The version number.
-set (pak_VERSION \"0.2.0\")
+set (pak_VERSION \"0.3.0\")
 
 configure_file(version.h.in ${CMAKE_SOURCE_DIR}/version.h)
 configure_file(pak.spec.in ${CMAKE_SOURCE_DIR}/pak.spec)
