@@ -168,7 +168,7 @@ void Pak::deleteChild(TreeItem *entry, int row)
 
 
 void Pak::deleteEntry(const std::string entry)
-{ // Incomplete.
+{ 
     TreeItem *tItem = nullptr;
     std::string entryItem;
     std::string path;
@@ -177,11 +177,13 @@ void Pak::deleteEntry(const std::string entry)
     if (slashPos == std::string::npos) {
         // If no slash, assume we are referring to a top level (root) item.
         tItem = &m_rootEntry;
+	entryItem = entry;
     } else {
       // Otherwise, take the part after the slash as the entry (file), and the part before as the path.
       slashPos++;  // Advance one as we want the data after the slash.
       path = entry.substr(0, slashPos);
       entryItem = entry.substr(slashPos, entry.length());
+      
       tItem = m_rootEntry.findTreeItem(path);
 
       if (tItem == nullptr) { // It wasn't found.
@@ -191,7 +193,6 @@ void Pak::deleteEntry(const std::string entry)
 	throw PakException("Invalid Path", message.c_str());
       }
     }
-
     auto row = tItem->findEntryRow(entryItem);
     
     if (row == -1) {
@@ -200,7 +201,6 @@ void Pak::deleteEntry(const std::string entry)
       message += entryItem;
       throw PakException("Invalid Item", message.c_str());
     }
-    
     tItem->deleteItem(row);
 }
 void Pak::deleteEntry(TreeItem *root, const int row)

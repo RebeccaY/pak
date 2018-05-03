@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     }
     
         if ( deleteStuff && workWithFile) {
-        try {
+	  try {
             Pak pak(pakfilename.c_str());
             if (verbose) {
                 pak.setVerbose(true);

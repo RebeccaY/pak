@@ -88,10 +88,12 @@ std::string absoluteFileName(pakDataLabel fname)
     const auto it = std::find(fname.rbegin(), fname.rend(), '/');
 #endif
 
-    const auto fit = it.base();
-    const auto x = fname.end() - fit;
+    const auto forward_it = it.base();
+    const auto end = std::find(fname.begin(), fname.end(), 0);
+    const auto x = end - forward_it;
+
     filename.resize(x);
-    std::copy(fit, fname.end(), filename.begin());
+    std::copy(forward_it, end, filename.begin());
     return filename;
 
 }
