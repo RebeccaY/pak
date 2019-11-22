@@ -316,6 +316,7 @@ int main(int argc, char **argv)
 
         }
     }
+    
     free(currentPath);
     return 0;
 }

@@ -230,6 +230,7 @@ Pak::Pak(const char *filename) : Pak()
 
 void Pak::makeDirectoryTree(TreeItem *item)
 {
+
     for (auto x = 0; x < item->childCount(); ++x) {
 #ifdef __linux
         mkdir(item->child(x)->label().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
@@ -243,10 +244,22 @@ void Pak::makeDirectoryTree(TreeItem *item)
     }
 
     for (auto x = 0; x < item->size(); x++) {
+
         std::ofstream fout;
+
 #ifndef CLI
+        if (fexists(absoluteFileName((item->data(x).filename)).toStdString().c_str())) {
+            if (confirmOverwrite(absoluteFileName((item->data(x).filename)).toStdString().c_str()) == false) {
+                continue;
+            }
+        }
         fout.open(absoluteFileName((item->data(x).filename)).toStdString().c_str(), std::ios_base::binary | std::ios_base::out);
 #else
+        if (fexists(absoluteFileName((item->data(x).filename)).c_str())) {
+            if (confirmOverwrite(absoluteFileName((item->data(x).filename)).c_str()) == false) {
+                continue;
+            }
+        }
         if (verbose) {
             std::cout << "Extracting.. " << absoluteFileName((item->data(x).filename)) << "\n";
         }
@@ -257,6 +270,7 @@ void Pak::makeDirectoryTree(TreeItem *item)
         }
         fout.write(item->data(x).data(), item->data(x).getLength());
         fout.close();
+        
     }
     chdir("..");
 }
@@ -267,8 +281,6 @@ int Pak::exportPak(const char *exportPath)
     chdir(exportPath);
     makeDirectoryTree(&m_rootEntry);
     return 0;
-
-
 }
 
 int Pak::exportDirectory(const char *exportPath, TreeItem *item)
@@ -305,7 +317,6 @@ int Pak::writePakDir(TreeItem *item)
 
 int Pak::writePak(const char *filename)
 {
-
     if (file.is_open()) {
         m_rootEntry.traverseForEachItem(&Pak::loadData, this);
         file.close();
@@ -423,9 +434,11 @@ int Pak::addEntry(std::string path, const char *filename, TreeItem *rootItem)
     newEntry.setPosition(directoryOffset);
     directoryOffset = safeAdd(directoryOffset, filesize);
     rootItem->appendItem(newEntry);
+#ifdef CLI
     if (verbose) {
       std::cout << path << "\t" << newEntry.getLength() << " bytes \n";
     }
+#endif
     return NO_ERROR;
 }
 

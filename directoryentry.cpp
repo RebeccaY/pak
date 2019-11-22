@@ -126,8 +126,18 @@ void DirectoryEntry::exportFile(const char *path, std::fstream &fin)
   fout.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
   try {
 #ifndef CLI
+      if (fexists(absoluteFileName(filename).toStdString())) {
+          if (confirmOverwrite(absoluteFileName(filename)) == false) {
+              return;
+          }
+      }
     fout.open(absoluteFileName(filename).toStdString().c_str(), std::ios::binary | std::ios_base::out);
-#else 
+#else
+      if (fexists(absoluteFileName(filename))) {
+      if (confirmOverwrite(absoluteFileName(filename)) == false) {
+          return;
+      }
+  }
     fout.open(absoluteFileName(filename).c_str(), std::ios::binary | std::ios_base::out);
 #endif
     fout.write(entryData.get() , m_length);

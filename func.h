@@ -31,6 +31,10 @@
 #include <vector>
 #include "pakexception.h"
 
+#ifdef CLI
+#include <iostream>
+#endif
+
 using stringList = std::vector<std::string>;
 
 enum class fileTypes {
@@ -55,6 +59,7 @@ using pakDataLabel = std::array< char, int(PAK_DATA_LABEL_SIZE) >;
 bool fexists(std::string filename);
 #ifdef CLI
 std::string absoluteFileName(pakDataLabel fname);
+bool confirmOverwrite(std::string filename);
 #endif
 std::string arrayToString(pakDataLabel &filename);
 

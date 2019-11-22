@@ -213,7 +213,11 @@ int TreeItem::findEntryRow ( const std::string searchTerm )
   std::string absFile;
   for (int x{0}; x < items.size(); x++)
     {
+#ifdef CLI
       absFile =  absoluteFileName(items[x].filename);
+#else
+      absFile = absoluteFileName(items[x].filename).toStdString();
+#endif
       if ( searchTerm == absFile )
 	{
 	  assert(x < items.size());

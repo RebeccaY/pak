@@ -45,6 +45,7 @@ bool fexists(std::string filename)
   return x;
 }
 
+
 unsigned long get_mem_total() {
 
   //  struct sysinfo info;
@@ -97,6 +98,20 @@ std::string absoluteFileName(pakDataLabel fname)
     return filename;
 
 }
+
+
+
+bool confirmOverwrite(std::string filename)
+{
+    std::string overwriteInput;
+    std::cout << filename << " already exists.  Overwrite? (Y/N)" << std::endl;
+    std::cin >> overwriteInput;
+    if (overwriteInput != "y" && overwriteInput != "Y") {
+        return false;
+    }
+    return true;
+}
+
 
 #endif
 
